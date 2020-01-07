@@ -1,45 +1,44 @@
 import Locker from './Locker.js'
 
-export default class LockerManager {
-  constructor(lockSize) {
-    this.availableLockers = []
-    this.inUseLockers = []
-    for (let i = 0; i < lockSize; i++) {
-      const locker = new Locker(i, '')
-      this.availableLockers.push(locker)
+export default class LockerManagers {
+  constructor(totalLockers, lockerSize) {
+    this.lockers = []
+    this.totalLockers = totalLockers
+    for (let i = 0; i < totalLockers; i++) {
+      const locker = new Locker(lockerSize)
+      locker.setIndex(i)
+      this.lockers.push(locker)
     }
   }
 
-  deposit() {
-    const locker = this.availableLockers.pop()
-    if (locker) {
-      const barCode = this.generateCode()
-      locker.currentCode = barCode
-      this.inUseLockers.push(locker)
-    }
-    return locker
-  }
-
-  withdraw(locker) {
-    let withdrawLocker
-    for (let i = 0; i < this.inUseLockers.length; i++) {
-      const l = this.inUseLockers[i]
-      if (l.index === locker.index && l.currentCode === locker.currentCode) {
-        withdrawLocker = this.inUseLockers.splice(i, 1)
-        break
+  robotDeposit() {
+    for (let i = 0; i < this.totalLockers; i++) {
+      const locker = this.lockers[i]
+      if (locker.availableBoxes.length > 0) {
+        return this.deposit(locker)
       }
     }
-    if (withdrawLocker) {
-      withdrawLocker.currentCode = ''
-      this.availableLockers.push(withdrawLocker)
-      return true
-    }
-    return false
   }
 
-  generateCode() {
-    return Math.random()
-      .toString(36)
-      .slice(-8)
+  humanDeposit(i) {
+    const locker = this.lockers[i]
+    return this.deposit(locker)
+  }
+
+  deposit(locker) {
+    const box = locker.deposit()
+    if (box) {
+      return {
+        lockerIndex: locker.index,
+        boxIndex: box.index,
+        barCode: box.code,
+      }
+    }
+    return box
+  }
+
+  withdraw(ticket) {
+    const locker = this.lockers[ticket.lockerIndex]
+    return locker.withdraw(ticket)
   }
 }
