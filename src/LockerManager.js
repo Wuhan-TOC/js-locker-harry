@@ -1,6 +1,6 @@
 import Locker from './Locker.js'
 
-export default class LockerManagers {
+export default class LockerManager {
   constructor(totalLockers, lockerSize) {
     this.lockers = []
     this.totalLockers = totalLockers
@@ -11,21 +11,18 @@ export default class LockerManagers {
     }
   }
 
-  robotDeposit() {
+  getFirstAvailableLocker() {
     for (let i = 0; i < this.totalLockers; i++) {
       const locker = this.lockers[i]
       if (locker.availableBoxes.length > 0) {
-        return this.deposit(locker)
+        return i
       }
     }
+    return -1
   }
 
-  humanDeposit(i) {
-    const locker = this.lockers[i]
-    return this.deposit(locker)
-  }
-
-  deposit(locker) {
+  deposit(index) {
+    const locker = this.lockers[index]
     const box = locker.deposit()
     if (box) {
       return {
