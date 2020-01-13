@@ -77,7 +77,7 @@ describe('test robot withdraw', () => {
       })
     })
   })
-  describe('success', () => {
+  describe('fail', () => {
     describe('should return false when withdraw given an invalid bar code', () => {
       test('', () => {
         const fakeTicket = {
