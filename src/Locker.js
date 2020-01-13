@@ -4,6 +4,7 @@ export default class Locker {
   constructor(lockSize) {
     this.availableBoxes = []
     this.inUseBoxes = []
+    this.lockSize = lockSize
     for (let i = 0; i < lockSize; i++) {
       const box = new Box(i, '')
       this.availableBoxes.push(box)
@@ -12,6 +13,10 @@ export default class Locker {
 
   setIndex(i) {
     this.index = i
+  }
+
+  getEmptyRate() {
+    return this.availableBoxes.length / this.lockSize
   }
 
   deposit() {

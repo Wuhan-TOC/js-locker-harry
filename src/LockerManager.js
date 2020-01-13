@@ -1,13 +1,16 @@
 import Locker from './Locker.js'
 
 export default class LockerManager {
-  constructor(totalLockers, lockerSize) {
+  constructor(lockerSettings) {
     this.lockers = []
-    this.totalLockers = totalLockers
-    for (let i = 0; i < totalLockers; i++) {
-      const locker = new Locker(lockerSize)
-      locker.setIndex(i)
-      this.lockers.push(locker)
+    this.totalLockers = 0
+    for (let i = 0; i < lockerSettings.length; i++) {
+      this.totalLockers += lockerSettings[i].totalLockers
+      for (let j = 0; j < lockerSettings[i].totalLockers; j++) {
+        const locker = new Locker(lockerSettings[i].lockerSize)
+        locker.setIndex(this.lockers.length)
+        this.lockers.push(locker)
+      }
     }
   }
 
@@ -21,9 +24,25 @@ export default class LockerManager {
     return -1
   }
 
+  getHighestEmptyRateLockerIndex() {
+    let highestEmptyRate = 0
+    let targetLockerIndex = -1
+    for (let i = 0; i < this.totalLockers; i++) {
+      const locker = this.lockers[i]
+      const emptyRate = locker.getEmptyRate()
+      if (emptyRate > highestEmptyRate) {
+        highestEmptyRate = emptyRate
+        targetLockerIndex = i
+      }
+    }
+    return targetLockerIndex
+  }
+
   deposit(index) {
     const locker = this.lockers[index]
+    // console.log(locker)
     const box = locker.deposit()
+    // console.log(box)
     if (box) {
       return {
         lockerIndex: locker.index,
